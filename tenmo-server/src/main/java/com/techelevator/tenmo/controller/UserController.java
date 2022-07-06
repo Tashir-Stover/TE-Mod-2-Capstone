@@ -40,9 +40,7 @@ public class UserController {
         return accountDao.findAccountById(id);
     }
 
-    public void transfer(){
 
-    }
 
     //Send transfer to another user
     // Choose from list of users (excluding sender)

@@ -8,4 +8,6 @@ public interface AccountDao {
 
     TenmoAccount findAccountByUsername(String username);
 
+    void transfer( int accountToId, int accountFromID);
+
 }
