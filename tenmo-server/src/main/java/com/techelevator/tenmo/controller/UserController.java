@@ -1,32 +1,38 @@
 package com.techelevator.tenmo.controller;
 
+import com.techelevator.tenmo.dao.AccountDao;
 import com.techelevator.tenmo.dao.UserDao;
 import com.techelevator.tenmo.model.TenmoAccount;
+import com.techelevator.tenmo.model.User;
 import org.springframework.data.repository.query.Param;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 
 @RestController
+@RequestMapping("/users")
 @PreAuthorize("isAuthenticated()")
 public class UserController {
 
     private UserDao userDao;
+    private AccountDao accountDao;
 
-    public UserController(UserDao userDao){
+    public UserController(UserDao userDao, AccountDao accountDao){
         this.userDao = userDao;
+        this.accountDao = accountDao;
+    }
+
+
+    @RequestMapping(path = "/{id}", method = RequestMethod.GET)
+    public User getUser(@PathVariable int id){
+        return userDao.getUserById(id);
     }
 
     // Display Account Balance
+    @RequestMapping(path = "{id}/tenmo_account", method = RequestMethod.GET)
+    public void displayBalance(String username, @PathVariable int id){
 
-    @RequestMapping(path = "/account", method = RequestMethod.GET)
-    public void displayBalance(TenmoAccount account){
-
-        System.out.println("Your current account balance: " + account.getBalance());
     }
 
     //Send transfer to another user
