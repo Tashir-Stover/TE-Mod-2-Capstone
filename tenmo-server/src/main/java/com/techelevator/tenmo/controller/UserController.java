@@ -9,6 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -23,6 +24,10 @@ public class UserController {
         this.accountDao = accountDao;
     }
 
+    @RequestMapping(method = RequestMethod.GET)
+    public List<User> getAllUsers(){
+        return userDao.findAll();
+    }
 
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
     public User getUser(@PathVariable int id){
@@ -31,7 +36,11 @@ public class UserController {
 
     // Display Account Balance
     @RequestMapping(path = "{id}/tenmo_account", method = RequestMethod.GET)
-    public void displayBalance(String username, @PathVariable int id){
+    public TenmoAccount displayBalance(@PathVariable int id){
+        return accountDao.findAccountById(id);
+    }
+
+    public void transfer(){
 
     }
 
