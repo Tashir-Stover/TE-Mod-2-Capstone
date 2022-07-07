@@ -35,12 +35,24 @@ public class UserController {
     }
 
     // Display Account Balance
-    @RequestMapping(path = "{id}/tenmo_account", method = RequestMethod.GET)
-    public TenmoAccount displayBalance(@PathVariable int id){
-        return accountDao.findAccountById(id);
+    @RequestMapping(path = "/{id}/tenmo_account", method = RequestMethod.GET)
+    public BigDecimal displayBalance(@PathVariable int id){
+        return accountDao.findAccountById(id).getBalance();
     }
 
+    @RequestMapping(path = "/transfers", method = RequestMethod.POST)
+    public void transfer(@RequestBody TenmoAccount sendingAccount, @RequestBody TenmoAccount receivingAccount, @RequestBody BigDecimal transferAmount){
+        if((transferAmount.compareTo(sendingAccount.getBalance()) < 0) && transferAmount.compareTo(new BigDecimal("0")) > 0){
+            transfer(sendingAccount, receivingAccount, transferAmount);
+        } else {
+            System.out.println("Transfer failed -- Verify that you have enough money in your account and that the amount you are trying to send is greater than 0");
+        }
+    }
 
+    @RequestMapping(path = "/{id}/tenmo_account/search", method = RequestMethod.GET)
+    public int getTenmoAccountId(@PathVariable int id){
+        return getTenmoAccountId(id);
+    }
 
     //Send transfer to another user
     // Choose from list of users (excluding sender)
