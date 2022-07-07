@@ -1,6 +1,7 @@
 package com.techelevator.tenmo.controller;
 
 import com.techelevator.tenmo.dao.AccountDao;
+import com.techelevator.tenmo.dao.TransferDAO;
 import com.techelevator.tenmo.dao.UserDao;
 import com.techelevator.tenmo.model.TenmoAccount;
 import com.techelevator.tenmo.model.User;
@@ -9,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -18,10 +20,12 @@ public class UserController {
 
     private UserDao userDao;
     private AccountDao accountDao;
+    private TransferDAO transferDAO;
 
-    public UserController(UserDao userDao, AccountDao accountDao){
+    public UserController(UserDao userDao, AccountDao accountDao, TransferDAO transferDAO){
         this.userDao = userDao;
         this.accountDao = accountDao;
+        this.transferDAO = transferDAO;
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -35,8 +39,9 @@ public class UserController {
     }
 
     // Display Account Balance
-    @RequestMapping(path = "/{id}/tenmo_account", method = RequestMethod.GET)
-    public BigDecimal displayBalance(@PathVariable int id){
+    @RequestMapping(path = "/view_balance", method = RequestMethod.GET)
+    public BigDecimal displayBalance(Principal user){
+        int id = userDao.findIdByUsername(user.getName());
         return accountDao.findAccountById(id).getBalance();
     }
 
@@ -50,8 +55,8 @@ public class UserController {
     }
 
     @RequestMapping(path = "/{id}/tenmo_account/search", method = RequestMethod.GET)
-    public int getTenmoAccountId(@PathVariable int id){
-        return getTenmoAccountId(id);
+    public TenmoAccount getTenmoAccount(@PathVariable int id){
+        return accountDao.findAccountById(id);
     }
 
     //Send transfer to another user

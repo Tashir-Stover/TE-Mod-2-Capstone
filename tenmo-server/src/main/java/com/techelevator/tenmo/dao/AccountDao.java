@@ -10,6 +10,6 @@ public interface AccountDao {
 
     TenmoAccount findAccountByUsername(String username);
 
-    void transfer(TenmoAccount sendingAccount, TenmoAccount receivingAccount, BigDecimal transferAmount);
+
 
 }
