@@ -4,6 +4,7 @@ import com.techelevator.tenmo.dao.AccountDao;
 import com.techelevator.tenmo.dao.TransferDAO;
 import com.techelevator.tenmo.dao.UserDao;
 import com.techelevator.tenmo.model.TenmoAccount;
+import com.techelevator.tenmo.model.TenmoTransfer;
 import com.techelevator.tenmo.model.User;
 import org.springframework.data.repository.query.Param;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -52,6 +53,15 @@ public class UserController {
         } else {
             System.out.println("Transfer failed -- Verify that you have enough money in your account and that the amount you are trying to send is greater than 0");
         }
+    }
+
+
+    public List<TenmoTransfer> getAllTransfersByUser(Principal user){
+        int userId = userDao.findIdByUsername(user.getName());
+        TenmoAccount userAccount = accountDao.findAccountById(userId);
+        int accountId = userAccount.getAccountId();
+        //if accountId == account_from || account_to
+        if(accountId == transferDAO.getReceivingAccountId(transferDAO.))
     }
 
     @RequestMapping(path = "/{id}/tenmo_account/search", method = RequestMethod.GET)
