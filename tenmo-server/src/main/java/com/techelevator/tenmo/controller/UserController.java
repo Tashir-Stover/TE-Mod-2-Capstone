@@ -5,6 +5,7 @@ import com.techelevator.tenmo.dao.TransferDAO;
 import com.techelevator.tenmo.dao.UserDao;
 import com.techelevator.tenmo.model.TenmoAccount;
 import com.techelevator.tenmo.model.TenmoTransfer;
+import com.techelevator.tenmo.model.TransferDTO;
 import com.techelevator.tenmo.model.User;
 import org.springframework.data.repository.query.Param;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -47,21 +48,22 @@ public class UserController {
     }
 
     @RequestMapping(path = "/transfers", method = RequestMethod.POST)
-    public void transfer(@RequestBody TenmoAccount sendingAccount, @RequestBody TenmoAccount receivingAccount, @RequestBody BigDecimal transferAmount){
-        if((transferAmount.compareTo(sendingAccount.getBalance()) < 0) && transferAmount.compareTo(new BigDecimal("0")) > 0){
-            transfer(sendingAccount, receivingAccount, transferAmount);
+    public void transfer(@RequestBody TransferDTO transferDTO){
+        if((transferDTO.getAmount().compareTo(transferDTO.getSenderAcct().getBalance()) < 0) && transferDTO.getAmount().compareTo(new BigDecimal("0")) > 0){
+            transferDAO.transfer(transferDTO);
         } else {
             System.out.println("Transfer failed -- Verify that you have enough money in your account and that the amount you are trying to send is greater than 0");
         }
     }
 
-
+    @RequestMapping(path = "/transfers", method = RequestMethod.GET)
     public List<TenmoTransfer> getAllTransfersByUser(Principal user){
+
         int userId = userDao.findIdByUsername(user.getName());
-        TenmoAccount userAccount = accountDao.findAccountById(userId);
-        int accountId = userAccount.getAccountId();
-        //if accountId == account_from || account_to
-        if(accountId == transferDAO.getReceivingAccountId(transferDAO.))
+
+        List<TenmoTransfer> transfers = transferDAO.getAllTransfersByUserId(userId);
+
+       return transfers;
     }
 
     @RequestMapping(path = "/{id}/tenmo_account/search", method = RequestMethod.GET)

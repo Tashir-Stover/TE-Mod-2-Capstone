@@ -6,6 +6,8 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class JdbcTransferDAO implements TransferDAO {
@@ -40,25 +42,27 @@ public class JdbcTransferDAO implements TransferDAO {
     }
 
     @Override
-    public void transfer(TenmoAccount sendingAccount, TenmoAccount receivingAccount, BigDecimal transferAmount) {
-        sendingAccount.setBalance(sendingAccount.getBalance().subtract(transferAmount));
-        receivingAccount.setBalance(receivingAccount.getBalance().add(transferAmount));
+    public void transfer(TransferDTO transferDTO) {
+
+        transferDTO.getSenderAcct().setBalance(transferDTO.getSenderAcct().getBalance().subtract(transferDTO.getAmount()));
+        transferDTO.getReceiverAcct().setBalance(transferDTO.getReceiverAcct().getBalance().add(transferDTO.getAmount()));
+
         //add this transfer to transfer table
-        String sql = "INSERT INTO transfer(transfer_type_id, transfer_status_id, account_from, account_to, amount) " +
+        String sql = "INSERT INTO tenmo_transfer(transfer_type_id, transfer_status_id, account_from, account_to, amount) " +
                 "VALUES(2, 2, ?, ?, ?);";
-        jdbcTemplate.queryForRowSet(sql, sendingAccount.getAccountId(), receivingAccount.getAccountId(), transferAmount);
+        jdbcTemplate.update(sql, transferDTO.getSenderAcct().getAccountId(), transferDTO.getReceiverAcct().getAccountId(), transferDTO.getAmount());
         //add transfer_type table
         sql = "INSERT INTO transfer_type(transfer_type_desc) VALUES ('Send');";
-        jdbcTemplate.queryForRowSet(sql);
+        jdbcTemplate.update(sql);
         //add transfer transfer_status table
         sql = "INSERT INTO transfer_status(transfer_status_desc) VALUES('Approved');";
-        jdbcTemplate.queryForRowSet(sql);
+        jdbcTemplate.update(sql);
     }
 
     @Override
     public TenmoTransfer getTransferById(int transferId){
         String sql = "SELECT transfer_id, transfer_type_id, transfer_status_id, account_from, account_to, amount " +
-                "FROM transfer " +
+                "FROM tenmo_transfer " +
                 "WHERE transfer_id = ?;";
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql, transferId);
 
@@ -69,15 +73,12 @@ public class JdbcTransferDAO implements TransferDAO {
         }
     }
 
-    @Override
-    public int getTransferId(){
-        String sql = 
-    }
+
 
     @Override
     public int getTransferTypeById(int transferId){
         String sql = "SELECT transfer_type_id " +
-                "FROM transfer " +
+                "FROM tenmo_transfer " +
                 "WHERE transfer_id = ?;";
         int transferTypeId = jdbcTemplate.queryForObject(sql, Integer.class, transferId);
         return transferTypeId;
@@ -86,7 +87,7 @@ public class JdbcTransferDAO implements TransferDAO {
     @Override
     public int getTransferStatusById(int transferId){
         String sql = "SELECT transfer_status_id " +
-                "FROM transfer " +
+                "FROM tenmo_transfer " +
                 "WHERE transfer_id = ?;";
         int transferStatusId = jdbcTemplate.queryForObject(sql, Integer.class, transferId);
         return transferStatusId;
@@ -118,6 +119,37 @@ public class JdbcTransferDAO implements TransferDAO {
     @Override
     public int getReceivingAccountId(int transferId){
         return getTransferById(transferId).getAccountTo();
+    }
+
+    public List<TenmoTransfer> getAllTransfersByUserId(int userId){
+
+        List<TenmoTransfer> transfers = new ArrayList<>();
+        String sql = "SELECT transfer_id, transfer_type_id, transfer_status_id, account_from, account_to, amount " +
+                "FROM tenmo_transfer " +
+                "JOIN tenmo_account ON  tenmo_account.account_id = tenmo_transfer.account_from " +
+                "JOIN tenmo_user ON tenmo_account.user_id = tenmo_user.user_id " +
+                "WHERE tenmo_user.user_id = ?;";
+        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userId);
+
+        while(results.next()){
+
+            transfers.add(mapRowToTenmoTransfer(results));
+        }
+
+         sql = "SELECT transfer_id, transfer_type_id, transfer_status_id, account_from, account_to, amount " +
+                "FROM tenmo_transfer " +
+                "JOIN tenmo_account ON  tenmo_account.account_id = tenmo_transfer.account_to " +
+                "JOIN tenmo_user ON tenmo_account.user_id = tenmo_user.user_id " +
+                "WHERE tenmo_user.user_id = ?;";
+         results = jdbcTemplate.queryForRowSet(sql, userId);
+
+        while(results.next()){
+
+            transfers.add(mapRowToTenmoTransfer(results));
+        }
+
+        return transfers;
+
     }
 
     private TenmoTransfer mapRowToTenmoTransfer(SqlRowSet rs) {
