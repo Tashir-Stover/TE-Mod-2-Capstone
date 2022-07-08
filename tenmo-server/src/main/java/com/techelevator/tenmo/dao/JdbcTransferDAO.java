@@ -18,34 +18,40 @@ public class JdbcTransferDAO implements TransferDAO {
     }
 
     @Override
-    public void addToBalance(BigDecimal transferAmount, int accountTo)
+    public void updateReceiverBalance(TenmoAccount accountTo)
     {
         String sql =
                 "UPDATE tenmo_account " +
-                        "SET balance = balance + ? " +
+                        "SET balance = ? " +
                         "WHERE account_id = ?";
 
-        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, transferAmount, accountTo);
+        jdbcTemplate.update(sql, accountTo.getBalance(), accountTo.getAccountId());
 
     }
 
     @Override
-    public void subtractFromBalance(BigDecimal transferAmount, int accountFrom)
+    public void updateSenderBalance(TenmoAccount accountFrom)
     {
         String sql =
                 "UPDATE tenmo_account " +
-                        "SET balance = balance - ? " +
+                        "SET balance = ? " +
                         "WHERE account_id = ?";
 
-        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, transferAmount, accountFrom);
+        jdbcTemplate.update(sql, accountFrom.getBalance(), accountFrom.getAccountId());
 
     }
 
     @Override
     public void transfer(TransferDTO transferDTO) {
 
-        transferDTO.getSenderAcct().setBalance(transferDTO.getSenderAcct().getBalance().subtract(transferDTO.getAmount()));
-        transferDTO.getReceiverAcct().setBalance(transferDTO.getReceiverAcct().getBalance().add(transferDTO.getAmount()));
+        BigDecimal updatedSenderBalance = transferDTO.getSenderAcct().getBalance().subtract(transferDTO.getAmount());
+        BigDecimal updatedReceiverBalance = transferDTO.getReceiverAcct().getBalance().add(transferDTO.getAmount());
+
+        transferDTO.getSenderAcct().setBalance(updatedSenderBalance);
+        transferDTO.getReceiverAcct().setBalance(updatedReceiverBalance);
+
+        updateSenderBalance(transferDTO.getSenderAcct());
+        updateReceiverBalance(transferDTO.getReceiverAcct());
 
         //add this transfer to transfer table
         String sql = "INSERT INTO tenmo_transfer(transfer_type_id, transfer_status_id, account_from, account_to, amount) " +

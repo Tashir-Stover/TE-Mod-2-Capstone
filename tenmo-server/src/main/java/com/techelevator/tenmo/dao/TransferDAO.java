@@ -8,8 +8,8 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public interface TransferDAO {
-    void addToBalance(BigDecimal transferAmount, int accountTo);
-    void subtractFromBalance(BigDecimal transferAmount, int accountFrom);
+    void updateReceiverBalance(TenmoAccount accountTo);
+    void updateSenderBalance(TenmoAccount accountFrom);
     void transfer(TransferDTO transferDTO);
     TenmoTransfer getTransferById(int id);
     int getTransferTypeById(int id);

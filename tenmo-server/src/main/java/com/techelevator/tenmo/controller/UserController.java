@@ -56,6 +56,11 @@ public class UserController {
         }
     }
 
+    @RequestMapping(path = "/transfers/{transferId}", method = RequestMethod.GET)
+    public TenmoTransfer getTransferById(@PathVariable int transferId){
+        return transferDAO.getTransferById(transferId);
+    }
+
     @RequestMapping(path = "/transfers", method = RequestMethod.GET)
     public List<TenmoTransfer> getAllTransfersByUser(Principal user){
 
