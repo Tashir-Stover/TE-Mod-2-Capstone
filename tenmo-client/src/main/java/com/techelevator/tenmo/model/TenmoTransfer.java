@@ -1,26 +1,14 @@
 package com.techelevator.tenmo.model;
 
-import javax.validation.constraints.NotBlank;
 import java.math.BigDecimal;
 
 public class TenmoTransfer {
 
-    @NotBlank
     private int  transferId;
-
-    @NotBlank
     private int transferTypeId;
-
-    @NotBlank
     private int transferStatusId;
-
-    @NotBlank
     private int accountFrom;
-
-    @NotBlank
     private int accountTo;
-
-    @NotBlank
     private BigDecimal amount;
 
 
@@ -73,17 +61,4 @@ public class TenmoTransfer {
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
-
-    //Constructor
-    public TenmoTransfer() {
-
-        this.transferId = transferId;
-        this.transferTypeId = transferTypeId;
-        this.transferStatusId = transferStatusId;
-        this.accountFrom = accountFrom;
-        this.accountTo = accountTo;
-        this.amount = amount;
-
-    }
-
 }

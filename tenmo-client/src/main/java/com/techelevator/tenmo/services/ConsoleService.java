@@ -1,9 +1,11 @@
 package com.techelevator.tenmo.services;
 
 
-import com.techelevator.tenmo.model.UserCredentials;
+import com.techelevator.tenmo.model.*;
 
 import java.math.BigDecimal;
+import java.nio.file.attribute.UserPrincipal;
+import java.security.Principal;
 import java.util.Scanner;
 
 public class ConsoleService {
@@ -50,6 +52,21 @@ public class ConsoleService {
         String username = promptForString("Username: ");
         String password = promptForString("Password: ");
         return new UserCredentials(username, password);
+    }
+
+    public void printTransactions(AuthenticatedUser user, TransferDTO dto, TenmoTransfer[] transfers){
+        System.out.println("-------------------------------------------");
+        System.out.println("Transfers");
+        System.out.println("TransferId          From/To          Amount");
+        System.out.println("-------------------------------------------");
+        for(TenmoTransfer transfer : transfers){
+            if(dto.getSenderAcct().getAccountId() == user.getUser().getId()) {
+                System.out.println(transfer.getTransferId() + "          To: " + dto.getReceiverAcct().getUserId() + "          $" + transfer.getAmount());
+            } else if (dto.getReceiverAcct().getAccountId() == user.getUser().getId()){
+                System.out.println(transfer.getTransferId() + "          From: " + dto.getSenderAcct().getUserId() + "          $" + transfer.getAmount());
+            }
+        }
+        System.out.println("-------------------------------------------");
     }
 
     public String promptForString(String prompt) {
