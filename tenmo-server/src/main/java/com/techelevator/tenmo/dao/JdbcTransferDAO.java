@@ -18,26 +18,26 @@ public class JdbcTransferDAO implements TransferDAO {
     }
 
     @Override
-    public void updateReceiverBalance(TenmoAccount accountTo)
+    public void updateReceiverBalance(TransferDTO transferDTO)
     {
         String sql =
                 "UPDATE tenmo_account " +
                         "SET balance = ? " +
                         "WHERE account_id = ?";
 
-        jdbcTemplate.update(sql, accountTo.getBalance(), accountTo.getAccountId());
+        jdbcTemplate.update(sql, transferDTO.getReceiverAcct().getBalance(), transferDTO.getReceiverAcct().getAccountId());
 
     }
 
     @Override
-    public void updateSenderBalance(TenmoAccount accountFrom)
+    public void updateSenderBalance(TransferDTO transferDTO)
     {
         String sql =
                 "UPDATE tenmo_account " +
                         "SET balance = ? " +
                         "WHERE account_id = ?";
 
-        jdbcTemplate.update(sql, accountFrom.getBalance(), accountFrom.getAccountId());
+        jdbcTemplate.update(sql, transferDTO.getSenderAcct().getBalance(), transferDTO.getSenderAcct().getAccountId());
 
     }
 
@@ -50,8 +50,8 @@ public class JdbcTransferDAO implements TransferDAO {
         transferDTO.getSenderAcct().setBalance(updatedSenderBalance);
         transferDTO.getReceiverAcct().setBalance(updatedReceiverBalance);
 
-        updateSenderBalance(transferDTO.getSenderAcct());
-        updateReceiverBalance(transferDTO.getReceiverAcct());
+        updateSenderBalance(transferDTO);
+        updateReceiverBalance(transferDTO);
 
         //add this transfer to transfer table
         String sql = "INSERT INTO tenmo_transfer(transfer_type_id, transfer_status_id, account_from, account_to, amount) " +
@@ -118,13 +118,13 @@ public class JdbcTransferDAO implements TransferDAO {
     }
 
     @Override
-    public int getSendingAccountId(int transferId){
-        return getTransferById(transferId).getAccountFrom();
+    public int getSendingAccountId(TransferDTO transferDTO){
+        return transferDTO.getSenderAcct().getAccountId();
     }
 
     @Override
-    public int getReceivingAccountId(int transferId){
-        return getTransferById(transferId).getAccountTo();
+    public int getReceivingAccountId(TransferDTO transferDTO){
+        return transferDTO.getReceiverAcct().getAccountId();
     }
 
     public List<TenmoTransfer> getAllTransfersByUserId(int userId){
@@ -160,12 +160,13 @@ public class JdbcTransferDAO implements TransferDAO {
 
     private TenmoTransfer mapRowToTenmoTransfer(SqlRowSet rs) {
         TenmoTransfer tt = new TenmoTransfer();
+
         tt.setTransferId(rs.getInt("transfer_id"));
         tt.setTransferTypeId(rs.getInt("transfer_type_id"));
         tt.setTransferStatusId(rs.getInt("transfer_status_id"));
-        tt.setAccountFrom(rs.getInt("account_from"));
-        tt.setAccountTo(rs.getInt("account_to"));
-        tt.setAmount(rs.getBigDecimal("amount"));
+        tt.getTransferDTO().getSenderAcct().setAccountId(rs.getInt("account_from"));
+        tt.getTransferDTO().getReceiverAcct().setAccountId(rs.getInt("account_to"));
+        tt.getTransferDTO().setAmount(rs.getBigDecimal("amount"));
         return tt;
     }
 }
