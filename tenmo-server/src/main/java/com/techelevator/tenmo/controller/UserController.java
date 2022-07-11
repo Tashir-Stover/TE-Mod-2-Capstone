@@ -7,7 +7,6 @@ import com.techelevator.tenmo.model.TenmoAccount;
 import com.techelevator.tenmo.model.TenmoTransfer;
 import com.techelevator.tenmo.model.TransferDTO;
 import com.techelevator.tenmo.model.User;
-import org.springframework.data.repository.query.Param;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,7 +43,7 @@ public class UserController {
     @RequestMapping(path = "/view_balance", method = RequestMethod.GET)
     public BigDecimal displayBalance(Principal user){
         int id = userDao.findIdByUsername(user.getName());
-        return accountDao.findAccountById(id).getBalance();
+        return accountDao.findAccountByUserId(id).getBalance();
     }
 
     @RequestMapping(path = "/transfers", method = RequestMethod.POST)
@@ -61,8 +60,10 @@ public class UserController {
         return transferDAO.getTransferById(transferId);
     }
 
+
+    //TODO - debug
     @RequestMapping(path = "/transfers", method = RequestMethod.GET)
-    public List<TenmoTransfer> getAllTransfersByUser(Principal user){
+    public List<TenmoTransfer> getAllTransfers(Principal user){
 
         int userId = userDao.findIdByUsername(user.getName());
 
@@ -71,11 +72,23 @@ public class UserController {
        return transfers;
     }
 
-    @RequestMapping(path = "/{id}/tenmo_account/search", method = RequestMethod.GET)
-    public TenmoAccount getTenmoAccount(@PathVariable int id){
-        return accountDao.findAccountById(id);
+    @RequestMapping(path = "/tenmo_account/search", method = RequestMethod.GET)
+    public TenmoAccount getTenmoAccount(Principal user){
+        int userId = userDao.findIdByUsername(user.getName());
+        return accountDao.findAccountByUserId(userId);
     }
 
+    @RequestMapping(path = "/tenmo_account/account_id_search", method = RequestMethod.GET)
+    public int getCurrentUserAccountId(Principal user){
+        int userId = userDao.findIdByUsername(user.getName());
+        return accountDao.findAccountByUserId(userId).getAccountId();
+    }
+
+    @RequestMapping(path = "/tenmo_account/{id}")
+    public User getUserByAccountId(@PathVariable int id){
+        User user = userDao.getUserByAccountId(id);
+        return user;
+    }
     //Send transfer to another user
     // Choose from list of users (excluding sender)
     //Includes user ids from to and from and amounts

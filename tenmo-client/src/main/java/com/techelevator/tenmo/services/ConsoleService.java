@@ -54,20 +54,20 @@ public class ConsoleService {
         return new UserCredentials(username, password);
     }
 
-    public void printTransactions(AuthenticatedUser user, TransferDTO dto, TenmoTransfer[] transfers){
-        System.out.println("-------------------------------------------");
-        System.out.println("Transfers");
-        System.out.println("TransferId          From/To          Amount");
-        System.out.println("-------------------------------------------");
-        for(TenmoTransfer transfer : transfers){
-            if(dto.getSenderAcct().getAccountId() == user.getUser().getId()) {
-                System.out.println(transfer.getTransferId() + "          To: " + dto.getReceiverAcct().getUserId() + "          $" + transfer.getAmount());
-            } else if (dto.getReceiverAcct().getAccountId() == user.getUser().getId()){
-                System.out.println(transfer.getTransferId() + "          From: " + dto.getSenderAcct().getUserId() + "          $" + transfer.getAmount());
-            }
-        }
-        System.out.println("-------------------------------------------");
-    }
+//    public void printTransactions(AuthenticatedUser user, TransferDTO dto, TenmoTransfer[] transfers){
+//        System.out.println("-------------------------------------------");
+//        System.out.println("Transfers");
+//        System.out.println("TransferId          From/To          Amount");
+//        System.out.println("-------------------------------------------");
+//        for(TenmoTransfer transfer : transfers){
+//            if(dto.getSenderAcct().getAccountId() == user.getUser().getId()) {
+//                System.out.println(transfer.getTransferId() + "          To: " + dto.getReceiverAcct().getUserId() + "          $" + transfer.getAmount());
+//            } else if (dto.getReceiverAcct().getAccountId() == user.getUser().getId()){
+//                System.out.println(transfer.getTransferId() + "          From: " + dto.getSenderAcct().getUserId() + "          $" + transfer.getAmount());
+//            }
+//        }
+//        System.out.println("-------------------------------------------");
+//    }
 
     public String promptForString(String prompt) {
         System.out.print(prompt);

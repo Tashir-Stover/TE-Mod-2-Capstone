@@ -127,14 +127,15 @@ public class JdbcTransferDAO implements TransferDAO {
         return transferDTO.getReceiverAcct().getAccountId();
     }
 
+    @Override
     public List<TenmoTransfer> getAllTransfersByUserId(int userId){
 
         List<TenmoTransfer> transfers = new ArrayList<>();
-        String sql = "SELECT transfer_id, transfer_type_id, transfer_status_id, account_from, account_to, amount " +
+        String sql = "SELECT tenmo_transfer.transfer_id, tenmo_transfer.transfer_type_id, tenmo_transfer.transfer_status_id, tenmo_transfer.account_from, tenmo_transfer.account_to, tenmo_transfer.amount " +
                 "FROM tenmo_transfer " +
-                "JOIN tenmo_account ON  tenmo_account.account_id = tenmo_transfer.account_from " +
-                "JOIN tenmo_user ON tenmo_account.user_id = tenmo_user.user_id " +
-                "WHERE tenmo_user.user_id = ?;";
+                "JOIN tenmo_account ON tenmo_account.account_id = tenmo_transfer.account_from " +
+                //"JOIN tenmo_user ON tenmo_account.user_id = tenmo_user.user_id " +
+                "WHERE tenmo_account.user_id = ?;";
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userId);
 
         while(results.next()){
@@ -142,11 +143,11 @@ public class JdbcTransferDAO implements TransferDAO {
             transfers.add(mapRowToTenmoTransfer(results));
         }
 
-         sql = "SELECT transfer_id, transfer_type_id, transfer_status_id, account_from, account_to, amount " +
+         sql = "SELECT tenmo_transfer.transfer_id, tenmo_transfer.transfer_type_id, tenmo_transfer.transfer_status_id, tenmo_transfer.account_from, tenmo_transfer.account_to, tenmo_transfer.amount " +
                 "FROM tenmo_transfer " +
-                "JOIN tenmo_account ON  tenmo_account.account_id = tenmo_transfer.account_to " +
-                "JOIN tenmo_user ON tenmo_account.user_id = tenmo_user.user_id " +
-                "WHERE tenmo_user.user_id = ?;";
+                "JOIN tenmo_account ON tenmo_account.account_id = tenmo_transfer.account_to " +
+               // "JOIN tenmo_user ON tenmo_account.user_id = tenmo_user.user_id " +
+                "WHERE tenmo_account.user_id = ?;";
          results = jdbcTemplate.queryForRowSet(sql, userId);
 
         while(results.next()){
@@ -164,9 +165,9 @@ public class JdbcTransferDAO implements TransferDAO {
         tt.setTransferId(rs.getInt("transfer_id"));
         tt.setTransferTypeId(rs.getInt("transfer_type_id"));
         tt.setTransferStatusId(rs.getInt("transfer_status_id"));
-        tt.getTransferDTO().getSenderAcct().setAccountId(rs.getInt("account_from"));
-        tt.getTransferDTO().getReceiverAcct().setAccountId(rs.getInt("account_to"));
-        tt.getTransferDTO().setAmount(rs.getBigDecimal("amount"));
+        tt.setAccountFrom(rs.getInt("account_from"));
+        tt.setAccountTo(rs.getInt("account_to"));
+        tt.setAmount(rs.getBigDecimal("amount"));
         return tt;
     }
 }

@@ -8,6 +8,12 @@ public class TransferDTO {
     private TenmoAccount receiverAcct;
     private BigDecimal amount;
 
+    public TransferDTO(TenmoAccount senderAcct, TenmoAccount receiverAcct, BigDecimal amount) {
+        this.senderAcct = senderAcct;
+        this.receiverAcct = receiverAcct;
+        this.amount = amount;
+    }
+
     public TenmoAccount getSenderAcct() {
         return senderAcct;
     }

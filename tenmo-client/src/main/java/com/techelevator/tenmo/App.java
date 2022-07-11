@@ -11,11 +11,12 @@ public class App {
 
     private static final String API_BASE_URL = "http://localhost:8080/";
 
+    private AuthenticatedUser currentUser;
+
     private final ConsoleService consoleService = new ConsoleService();
     private final AuthenticationService authenticationService = new AuthenticationService(API_BASE_URL);
     private final UserService userService = new UserService();
 
-    private AuthenticatedUser currentUser;
 
     public static void main(String[] args) {
         App app = new App();
@@ -58,10 +59,13 @@ public class App {
     private void handleLogin() {
         UserCredentials credentials = consoleService.promptForCredentials();
         currentUser = authenticationService.login(credentials);
+        userService.setAuthToken(currentUser.getToken());
         if (currentUser == null) {
             consoleService.printErrorMessage();
         }
     }
+
+
 
     private void mainMenu() {
         int menuSelection = -1;
@@ -95,10 +99,23 @@ public class App {
 	private void viewTransferHistory() {
 		// TODO Auto-generated method stub
 		TenmoTransfer[] transfers = userService.getAllTransfersByUser();
-        TransferDTO dto = null;
 
         if(transfers != null){
-            consoleService.printTransactions(currentUser, dto, transfers);
+            System.out.println("-------------------------------------------");
+            System.out.println("Transfers");
+            System.out.println("TransferId          From/To          Amount");
+            System.out.println("-------------------------------------------");
+            for(TenmoTransfer transfer : transfers){
+                if(userService.getCurrentUserAccountId() == transfer.getAccountTo()) {
+                    System.out.println(transfer.getTransferId() + "          From: " + userService.getUserByAccountId(transfer.getAccountFrom()).getUsername() +
+                            "          $" + transfer.getAmount());
+                } else if(userService.getCurrentUserAccountId() == transfer.getAccountFrom()) {
+                    System.out.println(transfer.getTransferId() + "          To: " + userService.getUserByAccountId(transfer.getAccountTo()).getUsername() +
+                            "          $" + transfer.getAmount());
+                }
+            }
+        } else {
+            System.out.println("You have no transactions to display");
         }
 	}
 

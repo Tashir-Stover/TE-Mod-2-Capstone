@@ -14,9 +14,44 @@ public class TenmoTransfer {
     @NotBlank
     private int transferStatusId;
 
-    private TransferDTO transferDTO;
+    @NotBlank
+    private int accountFrom;
+
+    @NotBlank
+    private int accountTo;
+
+    @NotBlank
+    private BigDecimal amount;
+
+    //private TransferDTO transferDTO;
+
+    //Constructor
 
 
+    public TenmoTransfer() {
+        this.transferId = transferId;
+        this.transferTypeId = transferTypeId;
+        this.transferStatusId = transferStatusId;
+        this.accountFrom = accountFrom;
+        this.accountTo = accountTo;
+        this.amount = amount;
+    }
+
+    public TenmoTransfer(int transferId, int transferTypeId, int transferStatusId, int accountFrom, int accountTo, BigDecimal amount) {
+        this.transferId = transferId;
+        this.transferTypeId = transferTypeId;
+        this.transferStatusId = transferStatusId;
+        this.accountFrom = accountFrom;
+        this.accountTo = accountTo;
+        this.amount = amount;
+    }
+
+//    public TenmoTransfer(int transferId, int transferTypeId, int transferStatusId, TransferDTO transferDTO) {
+//        this.transferId = transferId;
+//        this.transferTypeId = transferTypeId;
+//        this.transferStatusId = transferStatusId;
+//        this.transferDTO = transferDTO;
+//    }
 
     //Getter and Setters
     public int getTransferId() {
@@ -45,26 +80,37 @@ public class TenmoTransfer {
         this.transferTypeId = transferTypeId;
     }
 
-    public TransferDTO getTransferDTO() {
-        return transferDTO;
+    public int getAccountFrom() {
+        return accountFrom;
     }
 
-    public void setTransferDTO(TransferDTO transferDTO) {
-        this.transferDTO = transferDTO;
+    public void setAccountFrom(int accountFrom) {
+        this.accountFrom = accountFrom;
     }
 
-
-
-
-    //Constructor
-    public TenmoTransfer() {
-
-        this.transferId = transferId;
-        this.transferTypeId = transferTypeId;
-        this.transferStatusId = transferStatusId;
-        this.transferDTO = transferDTO;
-
-
+    public int getAccountTo() {
+        return accountTo;
     }
+
+    public void setAccountTo(int accountTo) {
+        this.accountTo = accountTo;
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    //    public TransferDTO getTransferDTO() {
+//        return transferDTO;
+//    }
+//
+//    public void setTransferDTO(TransferDTO transferDTO) {
+//        this.transferDTO = transferDTO;
+//    }
+
 
 }

@@ -20,7 +20,7 @@ public class JdbcAccountDao implements AccountDao{
     }
 
     @Override
-    public TenmoAccount findAccountById(int id){
+    public TenmoAccount findAccountByUserId(int id){
         String sql = "SELECT account_id, user_id, balance FROM tenmo_account WHERE user_id = ?;";
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql, id);
         if (results.next()) {

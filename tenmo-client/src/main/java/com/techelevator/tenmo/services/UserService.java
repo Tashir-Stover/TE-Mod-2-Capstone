@@ -1,8 +1,6 @@
 package com.techelevator.tenmo.services;
 
-import com.techelevator.tenmo.model.TenmoTransfer;
-import com.techelevator.tenmo.model.TransferDTO;
-import com.techelevator.tenmo.model.User;
+import com.techelevator.tenmo.model.*;
 import com.techelevator.util.BasicLogger;
 import org.springframework.http.*;
 import org.springframework.web.client.ResourceAccessException;
@@ -10,14 +8,13 @@ import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
-import java.security.Principal;
 
 public class UserService {
 
     public static final String API_BASE_URL = "http://localhost:8080/users";
     private RestTemplate restTemplate = new RestTemplate();
+    private String authToken;
 
-    private String authToken = null;
 
     public void setAuthToken(String authToken) {
         this.authToken = authToken;
@@ -76,7 +73,7 @@ public class UserService {
         return transfers;
     }
 
-    public boolean transfer(TransferDTO transferDTO){
+    public boolean transfer(){
         boolean success = false;
         try{
             restTemplate.put(API_BASE_URL + "/transfers", HttpMethod.POST, makeAuthEntity(), Void.class);
@@ -88,20 +85,54 @@ public class UserService {
     }
 
     public BigDecimal getBalance(){
-        BigDecimal balance = new BigDecimal("0");
+        BigDecimal balance = null;
         try{
             ResponseEntity<BigDecimal> response =
-            restTemplate.exchange(API_BASE_URL + "/view_balance", HttpMethod.GET, makeAuthEntity(), BigDecimal.class);
-            balance = response.getBody();
+                    restTemplate.exchange(API_BASE_URL + "/view_balance", HttpMethod.GET, makeAuthEntity(), BigDecimal.class);
+           balance = response.getBody();
         } catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
         }
         return balance;
     }
 
-    public TransferDTO getTransferDTO(){
-
+    public TenmoAccount getTenmoAccount(){
+        TenmoAccount account = null;
+        try{
+            ResponseEntity<TenmoAccount> response =
+                    restTemplate.exchange(API_BASE_URL + "/tenmo_account/search", HttpMethod.GET, makeAuthEntity(), TenmoAccount.class);
+            account = response.getBody();
+        } catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
+        }
+        return account;
     }
+
+    //TODO -- build this out
+    public int getCurrentUserAccountId(){
+        int accountId = 0;
+        try{
+            ResponseEntity<Integer> response =
+                    restTemplate.exchange(API_BASE_URL + "/tenmo_account/account_id_search", HttpMethod.GET, makeAuthEntity(), Integer.class);
+            accountId = response.getBody();
+        } catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
+        }
+        return accountId;
+    }
+
+    public User getUserByAccountId(int id){
+        User user = null;
+        try{
+            ResponseEntity<User> response =
+                    restTemplate.exchange(API_BASE_URL + "/tenmo_account/" + id, HttpMethod.GET, makeAuthEntity(), User.class);
+            user = response.getBody();
+        } catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
+        }
+        return user;
+    }
+
 
     private HttpEntity<User> makeUserEntity(User user) {
         HttpHeaders headers = new HttpHeaders();
