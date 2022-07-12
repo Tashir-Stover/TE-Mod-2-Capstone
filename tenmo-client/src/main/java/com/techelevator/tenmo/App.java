@@ -82,6 +82,8 @@ public class App {
                 sendBucks();
             } else if (menuSelection == 5) {
                 requestBucks();
+            }  else if (menuSelection == 6) {
+                viewTransferDetails();
             } else if (menuSelection == 0) {
                 continue;
             } else {
@@ -121,6 +123,7 @@ public class App {
 
 	private void viewPendingRequests() {
 		// TODO Auto-generated method stub
+        System.out.println("Not completed");
 		
 	}
 
@@ -131,7 +134,32 @@ public class App {
 
 	private void requestBucks() {
 		// TODO Auto-generated method stub
-		
+        System.out.println("Not completed");
 	}
+
+    private void viewTransferDetails() {
+
+       int id = consoleService.promptForInt("Please enter a transaction id: ");
+        TenmoTransfer transfer = userService.getTransferById(id);
+
+
+        if(transfer != null) {
+            System.out.println("-------------------------------------------");
+            System.out.println("Transfer Details");
+            System.out.println("-------------------------------------------");
+            System.out.println("Id: " + transfer.getTransferId() );
+
+            System.out.println("From: " + userService.getUserByAccountId(transfer.getAccountFrom()).getUsername());
+            System.out.println("To: " + userService.getUserByAccountId(transfer.getAccountTo()).getUsername());
+            System.out.println("Type: " + transfer.getTransferTypeId());
+            System.out.println("Status: " + transfer.getTransferStatusId());
+            System.out.println("Amount: " + transfer.getAmount());
+
+        }
+        else{
+            System.out.println("Transaction id not valid");
+        }
+
+    }
 
 }

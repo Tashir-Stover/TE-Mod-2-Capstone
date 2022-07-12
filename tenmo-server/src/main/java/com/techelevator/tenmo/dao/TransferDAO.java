@@ -1,6 +1,6 @@
 package com.techelevator.tenmo.dao;
 
-import com.techelevator.tenmo.model.TenmoAccount;
+
 import com.techelevator.tenmo.model.TenmoTransfer;
 import com.techelevator.tenmo.model.TransferDTO;
 
