@@ -1,11 +1,15 @@
 package com.techelevator.tenmo.model;
 
+import javax.validation.constraints.NotBlank;
 import java.math.BigDecimal;
 
 public class TransferDTO {
 
+
     private TenmoAccount senderAcct;
+
     private TenmoAccount receiverAcct;
+
     private BigDecimal amount;
 
     public TransferDTO(TenmoAccount senderAcct, TenmoAccount receiverAcct, BigDecimal amount) {

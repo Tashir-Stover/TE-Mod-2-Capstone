@@ -63,7 +63,7 @@ public class UserController {
     }
 
 
-    //TODO - debug
+
     @RequestMapping(path = "/transfers", method = RequestMethod.GET)
     public List<TenmoTransfer> getAllTransfers(Principal user){
 
@@ -92,7 +92,7 @@ public class UserController {
         return user;
     }
 
-    @RequestMapping(path = "/tenmo_account?user_id={id}", method = RequestMethod.GET)
+    @RequestMapping(path = "/tenmo_account/find_by_user_id/{id}", method = RequestMethod.GET)
     public TenmoAccount getAccountByUserId(@PathVariable int id){
         TenmoAccount account = accountDao.findAccountByUserId(id);
         return account;

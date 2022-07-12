@@ -133,18 +133,15 @@ public class App {
         for(User user: allUsers){
             System.out.println(user.getId() + " " + user.getUsername());
         }
+        TransferDTO transferDTO = new TransferDTO();
+        transferDTO.setSenderAcct(userService.getTenmoAccount());
         int id = consoleService.promptForInt("Please enter a user id: ");
         BigDecimal amount = consoleService.promptForBigDecimal("Please enter an amount you'd like to send: ");
 		TenmoAccount receiverAccount = userService.getAccountByUserId(id);
-        TransferDTO transferDTO = new TransferDTO();
-        transferDTO.setSenderAcct(userService.getTenmoAccount());
         if(id != currentUser.getUser().getId()) {
             transferDTO.setReceiverAcct(receiverAccount);
-        }
-        else
-        {
+        }else{
             System.out.println("You can't send money to yourself. Select another user id");
-
         }
         if((amount.compareTo(new BigDecimal("0")) > 0) && (userService.getTenmoAccount().getBalance().compareTo(amount) > 0))  {
             transferDTO.setAmount(amount);

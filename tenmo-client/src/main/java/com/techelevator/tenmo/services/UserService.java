@@ -108,7 +108,7 @@ public class UserService {
         return account;
     }
 
-    //TODO -- build this out
+
     public int getCurrentUserAccountId(){
         int accountId = 0;
         try{
@@ -132,13 +132,12 @@ public class UserService {
         }
         return user;
     }
-
-    public TenmoAccount getAccountByUserId(int id)
-    {
+    //TODO - debug
+    public TenmoAccount getAccountByUserId(int id) {
         TenmoAccount account = null;
         try{
             ResponseEntity<TenmoAccount> response =
-                    restTemplate.exchange(API_BASE_URL + "/tenmo_account?user_id=" + id, HttpMethod.GET, makeAuthEntity(), TenmoAccount.class);
+                    restTemplate.exchange(API_BASE_URL + "/tenmo_account/find_by_user_id/" + id, HttpMethod.GET, makeAuthEntity(), TenmoAccount.class);
             account = response.getBody();
         } catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
@@ -150,8 +149,9 @@ public class UserService {
         HttpEntity<TransferDTO> entity = makeTransferDTOEntity(newTransferDTO);
         boolean success = false;
         try {
-           restTemplate.postForObject(API_BASE_URL, entity, void.class);
+           restTemplate.postForObject(API_BASE_URL + "/transfers", entity, TransferDTO.class);
            success = true;
+            System.out.println("Transfer was a success!");
         } catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
         }

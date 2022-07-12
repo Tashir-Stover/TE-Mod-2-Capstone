@@ -12,6 +12,14 @@ public class TenmoAccount {
     @NotBlank
     private BigDecimal balance;
 
+    //Constructor
+    public TenmoAccount(){
+
+        this.userId = userId;
+        this.accountId = accountId;
+        this.balance = balance;
+    }
+
     // Getter and Setters
     public int getUserId() {
         return userId;
@@ -35,15 +43,6 @@ public class TenmoAccount {
     }
 
     public void setBalance(BigDecimal balance) {
-        this.balance = balance;
-    }
-
-    //Constructor
-
-    public TenmoAccount(){
-
-        this.userId = userId;
-        this.accountId = accountId;
         this.balance = balance;
     }
 
