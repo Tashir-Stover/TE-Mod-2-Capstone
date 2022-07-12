@@ -73,7 +73,7 @@ public class UserService {
         return transfers;
     }
 
-    public boolean transfer(){
+   /* public boolean transfer(){
         boolean success = false;
         try{
             restTemplate.put(API_BASE_URL + "/transfers", HttpMethod.POST, makeAuthEntity(), Void.class);
@@ -82,7 +82,7 @@ public class UserService {
             BasicLogger.log(e.getMessage());
         }
         return success;
-    }
+    } */
 
     public BigDecimal getBalance(){
         BigDecimal balance = null;
@@ -133,6 +133,31 @@ public class UserService {
         return user;
     }
 
+    public TenmoAccount getAccountByUserId(int id)
+    {
+        TenmoAccount account = null;
+        try{
+            ResponseEntity<TenmoAccount> response =
+                    restTemplate.exchange(API_BASE_URL + "/tenmo_account?user_id=" + id, HttpMethod.GET, makeAuthEntity(), TenmoAccount.class);
+            account = response.getBody();
+        } catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
+        }
+        return account;
+    }
+
+    public boolean transfer(TransferDTO newTransferDTO) {
+        HttpEntity<TransferDTO> entity = makeTransferDTOEntity(newTransferDTO);
+        boolean success = false;
+        try {
+           restTemplate.postForObject(API_BASE_URL, entity, void.class);
+           success = true;
+        } catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
+        }
+        return success;
+    }
+
 
     private HttpEntity<User> makeUserEntity(User user) {
         HttpHeaders headers = new HttpHeaders();
@@ -145,5 +170,12 @@ public class UserService {
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(authToken);
         return new HttpEntity<>(headers);
+    }
+
+    private HttpEntity<TransferDTO> makeTransferDTOEntity(TransferDTO transferDTO) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(authToken);
+        return new HttpEntity<>(transferDTO, headers);
     }
 }

@@ -11,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.List;
@@ -48,7 +49,7 @@ public class UserController {
     }
 
     @RequestMapping(path = "/transfers", method = RequestMethod.POST)
-    public void transfer(@RequestBody TransferDTO transferDTO){
+    public void transfer(@Valid @RequestBody TransferDTO transferDTO){
         if((transferDTO.getAmount().compareTo(transferDTO.getSenderAcct().getBalance()) < 0) && transferDTO.getAmount().compareTo(new BigDecimal("0")) > 0){
             transferDAO.transfer(transferDTO);
         } else {
@@ -85,10 +86,16 @@ public class UserController {
         return accountDao.findAccountByUserId(userId).getAccountId();
     }
 
-    @RequestMapping(path = "/tenmo_account/{id}")
+    @RequestMapping(path = "/tenmo_account/{id}", method = RequestMethod.GET)
     public User getUserByAccountId(@PathVariable int id){
         User user = userDao.getUserByAccountId(id);
         return user;
+    }
+
+    @RequestMapping(path = "/tenmo_account?user_id={id}", method = RequestMethod.GET)
+    public TenmoAccount getAccountByUserId(@PathVariable int id){
+        TenmoAccount account = accountDao.findAccountByUserId(id);
+        return account;
     }
     //Send transfer to another user
     // Choose from list of users (excluding sender)
