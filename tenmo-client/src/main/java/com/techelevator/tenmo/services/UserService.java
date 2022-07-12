@@ -132,7 +132,7 @@ public class UserService {
         }
         return user;
     }
-    //TODO - debug
+    
     public TenmoAccount getAccountByUserId(int id) {
         TenmoAccount account = null;
         try{

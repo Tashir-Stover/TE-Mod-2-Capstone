@@ -54,6 +54,7 @@ public class JdbcTransferDAO implements TransferDAO {
         updateReceiverBalance(transferDTO);
 
         //add this transfer to transfer table
+        //clarify what 2, 2 means
         String sql = "INSERT INTO tenmo_transfer(transfer_type_id, transfer_status_id, account_from, account_to, amount) " +
                 "VALUES(2, 2, ?, ?, ?);";
         jdbcTemplate.update(sql, transferDTO.getSenderAcct().getAccountId(), transferDTO.getReceiverAcct().getAccountId(), transferDTO.getAmount());

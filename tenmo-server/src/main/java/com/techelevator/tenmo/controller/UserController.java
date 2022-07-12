@@ -48,6 +48,7 @@ public class UserController {
         return accountDao.findAccountByUserId(id).getBalance();
     }
 
+    //pass through a prinicpal
     @RequestMapping(path = "/transfers", method = RequestMethod.POST)
     public void transfer(@Valid @RequestBody TransferDTO transferDTO){
         if((transferDTO.getAmount().compareTo(transferDTO.getSenderAcct().getBalance()) < 0) && transferDTO.getAmount().compareTo(new BigDecimal("0")) > 0){
